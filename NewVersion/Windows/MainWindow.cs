@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Updater;
 
 namespace NewVersion
 {
@@ -23,42 +22,45 @@ namespace NewVersion
         public MainWindow()
         {
             InitializeComponent();
+            current = Assembly.GetExecutingAssembly().GetName().Version;
+            this.label1.Text = current.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             ProgrammUpdate();
         }
-        public void ProgrammUpdate()
-        {
-                string filename = @"localhost/Y:/new/test.exe";
-                Assembly assem = Assembly.ReflectionOnlyLoadFrom(filename);
-                AssemblyName assemName = assem.GetName();
-                newVersion = assemName.Version;
-                current = Assembly.GetExecutingAssembly().GetName().Version;
-                if (!newVersion.Equals(current))
-                {
-                isUpdate = true;
-                //Process.Start("")
-                Updater up = new Updater();
-                Application.Run(up);
-                this.Close();
-                Application.Exit();
-                }
-        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
-            textBox1.Text = current.ToString();
+            
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
         }
-
-        private void Form1_Load_1(object sender, EventArgs e)
+        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-
+            progress_download.Value = e.ProgressPercentage;
+        }
+        public void ProgrammUpdate()
+        {
+            string filename = "http://localhost/Y:/new/test.exe";
+            //string filename = @"localhost/Y:/new/test.exe"; http://localhost/Y:/new/test.exe
+            Assembly assem = Assembly.ReflectionOnlyLoadFrom(filename);
+            AssemblyName assemName = assem.GetName();
+            newVersion = assemName.Version;
+            //current = Assembly.GetExecutingAssembly().GetName().Version;
+            if (!newVersion.Equals(current))
+            {
+                isUpdate = true;
+                Process.Start("Updater");
+                // Updater up = new Updater();
+                // Application.Run(up);
+                this.Close();
+                //Application.Exit();
+            }
         }
     }
 }

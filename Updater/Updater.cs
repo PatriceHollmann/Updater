@@ -8,7 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using NewVersion;
+using System.Diagnostics;
 
 namespace Updater
 {
@@ -20,13 +20,13 @@ namespace Updater
         }
         public void StartUpdate()
         {
-            NewVersion newVersion = new NewVersion();
             using (WebClient client = new WebClient())
             {
                 client.DownloadFile("http://localhost/Y:/new", "test.exe");
                 client.UploadFile("http://localhost/Y:", "test.exe");
             }
-            Application.Run(newVersion);
+            //Application.Run(newVersion);
+            Process.Start("NewVersion");
             this.Close();
         }
     }
