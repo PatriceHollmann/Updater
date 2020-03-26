@@ -40,26 +40,27 @@ namespace NewVersion
         {
 
         }
-        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            progress_download.Value = e.ProgressPercentage;
-        }
+
         public void ProgrammUpdate()
         {
-            string filename = "http://localhost/Y:/new/test.exe";
+            string filename = @"C:\Users\User\Documents\вент.tgml"; //test
+            //string filename = "http://localhost/Y:/new/test.exe";
             //string filename = @"localhost/Y:/new/test.exe"; http://localhost/Y:/new/test.exe
-            Assembly assem = Assembly.ReflectionOnlyLoadFrom(filename);
-            AssemblyName assemName = assem.GetName();
-            newVersion = assemName.Version;
-            //current = Assembly.GetExecutingAssembly().GetName().Version;
-            if (!newVersion.Equals(current))
+            try
             {
-                isUpdate = true;
-                Process.Start("Updater");
-                // Updater up = new Updater();
-                // Application.Run(up);
-                this.Close();
-                //Application.Exit();
+                Assembly assem = Assembly.ReflectionOnlyLoadFrom(filename);
+                AssemblyName assemName = assem.GetName();
+                newVersion = assemName.Version;
+                if (!newVersion.Equals(current))
+                {
+                    isUpdate = true;
+                    Process.Start("Updater");
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not download file: " + ex.Message);
             }
         }
     }

@@ -22,12 +22,23 @@ namespace Updater
         {
             using (WebClient client = new WebClient())
             {
-                client.DownloadFile("http://localhost/Y:/new", "test.exe");
-                client.UploadFile("http://localhost/Y:", "test.exe");
+                try
+                {
+                    client.DownloadFile("http://localhost/Y:/new", "test.exe");
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ProgressChanged);
+                    client.UploadFile("http://localhost/Y:", "test.exe");
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Could not download file: " + ex.Message);
+                }
             }
-            //Application.Run(newVersion);
             Process.Start("NewVersion");
             this.Close();
+        }
+        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
         }
     }
 }
