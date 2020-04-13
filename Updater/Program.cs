@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using NewVersion;
 
 namespace Updater
 {
@@ -14,11 +13,15 @@ namespace Updater
         /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args) 
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Updater());
+            //Updater updater = (Updater)Application.OpenForms["Updater"];
+            var updater = new Updater();    
+            updater.args = args;
+           // updater.PostInit();
+           Application.Run(updater);
         }
     }
 }

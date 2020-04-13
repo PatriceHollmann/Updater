@@ -33,7 +33,7 @@ namespace NewVersion
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -43,25 +43,80 @@ namespace NewVersion
 
         public void ProgrammUpdate()
         {
-            string filename = @"C:\Users\User\Documents\вент.tgml"; //test
-            //string filename = "http://localhost/Y:/new/test.exe";
-            //string filename = @"localhost/Y:/new/test.exe"; http://localhost/Y:/new/test.exe
+            //string filename = @"C:\Users\User\source\repos\IEnumerable\IEnumerable\bin\Debug\IEnumerable.exe"; //test
+            ////string filename = @"Y:/new/test.exe";
             try
             {
-                Assembly assem = Assembly.ReflectionOnlyLoadFrom(filename);
-                AssemblyName assemName = assem.GetName();
-                newVersion = assemName.Version;
-                if (!newVersion.Equals(current))
-                {
-                    isUpdate = true;
-                    Process.Start("Updater");
+                //    Assembly assem = Assembly.ReflectionOnlyLoadFrom(filename);
+                //    AssemblyName assemName = assem.GetName();
+                //    newVersion = assemName.Version;
+                //    if (!newVersion.Equals(current))
+                //    {
+                //        isUpdate = true;
+                
+                var exePath = SearchExe("Updater");
+                    var currentPath = Path.GetFullPath("./")+"/NewVersion.exe";
+                    Process.Start(exePath,currentPath);
                     this.Close();
-                }
+                //}
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Could not download file: " + ex.Message);
             }
+        }
+        public string SearchExe(string exeName)
+        {
+            var currentPath = Path.GetFullPath("./");
+            var fileSearcher = new FileSearcher(currentPath);
+            var findItem = fileSearcher.Search(exeName);
+            return findItem;
+        }
+    }
+    public class FileSearcher
+    {
+        string currentPath;
+        List<FileInfo> findedItems = new List<FileInfo>();
+        
+        public FileSearcher(string currentPath)
+        {
+            this.currentPath = currentPath;
+        }
+        public string Search(string exeName)
+        {
+            SearchInDirectory(new DirectoryInfo(currentPath), exeName, null,true);
+            if (findedItems.Count == 0)
+            {
+                return null;
+            }
+            return findedItems.OrderByDescending(a => a.CreationTime).First().FullName;
+        }
+        public void SearchInDirectory(DirectoryInfo directory, string exeName, string exceptionDirectory,bool flag)
+        {
+            var folder = directory.Name;
+            var files = directory.GetFiles(exeName + ".exe");
+           
+            // --Parent Folder 
+            //   --child 1 
+
+            //Call 1 
+            //Call 2
+
+            if (files.Length != 0)
+            {
+                this.findedItems.Add(files[0]);
+            }
+                foreach (var item in directory.GetDirectories())
+                {
+                    if (item.Name != exceptionDirectory)
+                    {
+                         SearchInDirectory(item, exeName, null,false);
+                    }
+                }
+                if (flag&&findedItems.Count==0)
+                {
+                    SearchInDirectory(directory.Parent, exeName, directory.Name,true);  
+                }
         }
     }
 }
